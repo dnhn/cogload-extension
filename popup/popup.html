@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <title>Cognitive Load Visualizer</title>
+    <style>
+      body {
+        font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
+          sans-serif;
+        margin: 10px;
+        min-width: 260px;
+      }
+      h1 {
+        font-size: 16px;
+        margin: 0 0 8px;
+      }
+      .metric {
+        margin-bottom: 6px;
+        font-size: 13px;
+      }
+      .score {
+        font-size: 22px;
+        font-weight: 600;
+        margin-bottom: 8px;
+      }
+      .badge {
+        display: inline-block;
+        padding: 2px 6px;
+        border-radius: 4px;
+        font-size: 11px;
+        font-weight: 500;
+      }
+      .high {
+        background: #ffe5e5;
+        color: #b30000;
+      }
+      .medium {
+        background: #fff4e0;
+        color: #b35a00;
+      }
+      .low {
+        background: #e3f6e3;
+        color: #1f7a1f;
+      }
+      button {
+        margin-top: 8px;
+        padding: 4px 8px;
+        font-size: 12px;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Cognitive Load</h1>
+
+    <div
+      id="page-url"
+      style="
+        font-size: 12px;
+        color: #666;
+        margin-bottom: 8px;
+        word-break: break-all;
+      "
+    ></div>
+
+    <div
+      id="unsupported"
+      style="
+        display: none;
+        background: #ffe6e6;
+        color: #b30000;
+        padding: 8px;
+        border-radius: 4px;
+        margin-bottom: 10px;
+        font-size: 13px;
+        font-weight: 500;
+      "
+    >
+      This page cannot be analyzed. Open a regular website (https:// or
+      http://).
+    </div>
+
+    <div id="score" class="score">–</div>
+    <div id="badge" class="badge">No data</div>
+
+    <div class="metric" id="depth"></div>
+    <div class="metric" id="density"></div>
+    <div class="metric" id="fragment"></div>
+    <div class="metric" id="interactions"></div>
+
+    <button id="refresh">Re-analyze page</button>
+
+    <script src="popup.js"></script>
+  </body>
+</html>
