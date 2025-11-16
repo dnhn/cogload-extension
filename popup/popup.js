@@ -1,5 +1,8 @@
 // ------------------ Helpers ------------------
 
+const refreshBtn = document.getElementById("refresh");
+const refreshBtnOriginalText = refreshBtn.textContent;
+
 async function getCurrentTab() {
   const tabs = await chrome.tabs.query({ active: true, currentWindow: true });
   return tabs[0];
@@ -57,6 +60,8 @@ function updateMetricsUI(metrics) {
 }
 
 async function loadMetrics() {
+  refreshBtn.disabled = false;
+  refreshBtn.textContent = refreshBtnOriginalText;
   chrome.storage.local.get("cogloadMetrics", ({ cogloadMetrics }) => {
     updateMetricsUI(cogloadMetrics);
   });
@@ -64,9 +69,11 @@ async function loadMetrics() {
 
 // ------------------ Refresh Button ------------------
 
-document.getElementById("refresh").addEventListener("click", async () => {
+refreshBtn.addEventListener("click", async () => {
   const tab = await getCurrentTab();
   if (!isSupportedUrl(tab.url)) return;
+  refreshBtn.disabled = true;
+  refreshBtn.textContent = "Analyzing…";
 
   await chrome.scripting.executeScript({
     target: { tabId: tab.id },
@@ -92,7 +99,6 @@ document.getElementById("refresh").addEventListener("click", async () => {
 (async () => {
   const tab = await getCurrentTab();
   const unsupportedBanner = document.getElementById("unsupported");
-  const refreshBtn = document.getElementById("refresh");
   const pageUrlEl = document.getElementById("page-url");
 
   // Always show the URL of the page being analyzed
