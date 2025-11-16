@@ -98,12 +98,7 @@ refreshBtn.addEventListener("click", async () => {
 // ------------------ Live Analysis ------------------
 
 liveCheck.addEventListener("click", async () => {
-  const tab = await getCurrentTab();
-  if (!isSupportedUrl(tab.url)) return;
-
-  if (liveCheck.checked) {
-  } else {
-  }
+  await chrome.storage.local.set({ cogloadLiveOnScroll: liveCheck.checked });
 });
 
 // ------------------ On Popup Open ------------------
@@ -173,4 +168,26 @@ liveCheck.addEventListener("click", async () => {
   } else {
     loadMetrics();
   }
+
+  // Initialize live checkbox from storage (default false)
+  try {
+    const s = await chrome.storage.local.get("cogloadLiveOnScroll");
+    liveCheck.checked = !!s.cogloadLiveOnScroll;
+  } catch (e) {
+    liveCheck.checked = false;
+  }
+
+  // Listen for metric updates written by the content script (e.g., after scroll)
+  chrome.storage.onChanged.addListener((changes, area) => {
+    if (area !== "local") return;
+    if (changes.cogloadMetrics) {
+      const newMetrics = changes.cogloadMetrics.newValue;
+      // Update UI immediately when metrics change
+      updateMetricsUI(newMetrics);
+    }
+    if (changes.cogloadLiveOnScroll) {
+      // Keep the checkbox in sync if changed elsewhere
+      liveCheck.checked = !!changes.cogloadLiveOnScroll.newValue;
+    }
+  });
 })();
