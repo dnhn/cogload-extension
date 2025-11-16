@@ -18,10 +18,15 @@
         margin-bottom: 6px;
         font-size: 13px;
       }
+      .score-container {
+        margin-bottom: 8px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
       .score {
         font-size: 22px;
         font-weight: 600;
-        margin-bottom: 8px;
       }
       .badge {
         display: inline-block;
@@ -44,6 +49,7 @@
       }
       button {
         margin-top: 8px;
+        width: 100%;
         padding: 4px 8px;
         font-size: 12px;
       }
@@ -79,8 +85,10 @@
       http://).
     </div>
 
-    <div id="score" class="score">–</div>
-    <div id="badge" class="badge">No data</div>
+    <div class="score-container">
+      <div id="score" class="score">–</div>
+      <div id="badge" class="badge">No data</div>
+    </div>
 
     <div class="metric" id="depth"></div>
     <div class="metric" id="density"></div>
