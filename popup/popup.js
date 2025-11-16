@@ -1,7 +1,8 @@
-// ------------------ Helpers ------------------
-
 const refreshBtn = document.getElementById("refresh");
 const refreshBtnOriginalText = refreshBtn.textContent;
+const liveCheck = document.getElementById("live");
+
+// ------------------ Helpers ------------------
 
 async function getCurrentTab() {
   const tabs = await chrome.tabs.query({ active: true, currentWindow: true });
@@ -92,6 +93,17 @@ refreshBtn.addEventListener("click", async () => {
   });
 
   setTimeout(loadMetrics, 400);
+});
+
+// ------------------ Live Analysis ------------------
+
+liveCheck.addEventListener("click", async () => {
+  const tab = await getCurrentTab();
+  if (!isSupportedUrl(tab.url)) return;
+
+  if (liveCheck.checked) {
+  } else {
+  }
 });
 
 // ------------------ On Popup Open ------------------
