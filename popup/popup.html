@@ -18,10 +18,15 @@
         margin-bottom: 6px;
         font-size: 13px;
       }
+      .score-container {
+        margin-bottom: 8px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
       .score {
         font-size: 22px;
         font-weight: 600;
-        margin-bottom: 8px;
       }
       .badge {
         display: inline-block;
@@ -44,6 +49,7 @@
       }
       button {
         margin-top: 8px;
+        width: 100%;
         padding: 4px 8px;
         font-size: 12px;
       }
@@ -79,14 +85,27 @@
       http://).
     </div>
 
-    <div id="score" class="score">–</div>
-    <div id="badge" class="badge">No data</div>
+    <div class="score-container">
+      <div id="score" class="score">–</div>
+      <div id="badge" class="badge">No data</div>
+    </div>
 
     <div class="metric" id="depth"></div>
     <div class="metric" id="density"></div>
     <div class="metric" id="fragment"></div>
     <div class="metric" id="interactions"></div>
 
+    <div
+      style="
+        margin-top: 12px;
+        display: flex;
+        align-items: center;
+        gap: 4px;
+      "
+    >
+      <input id="live" type="checkbox" />
+      <label for="live">Analyze on scroll</label>
+    </div>
     <button id="refresh">Re-analyze page</button>
 
     <script src="popup.js"></script>

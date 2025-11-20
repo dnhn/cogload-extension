@@ -1,3 +1,7 @@
+const refreshBtn = document.getElementById("refresh");
+const refreshBtnOriginalText = refreshBtn.textContent;
+const liveCheck = document.getElementById("live");
+
 // ------------------ Helpers ------------------
 
 async function getCurrentTab() {
@@ -57,6 +61,8 @@ function updateMetricsUI(metrics) {
 }
 
 async function loadMetrics() {
+  refreshBtn.disabled = false;
+  refreshBtn.textContent = refreshBtnOriginalText;
   chrome.storage.local.get("cogloadMetrics", ({ cogloadMetrics }) => {
     updateMetricsUI(cogloadMetrics);
   });
@@ -64,9 +70,11 @@ async function loadMetrics() {
 
 // ------------------ Refresh Button ------------------
 
-document.getElementById("refresh").addEventListener("click", async () => {
+refreshBtn.addEventListener("click", async () => {
   const tab = await getCurrentTab();
   if (!isSupportedUrl(tab.url)) return;
+  refreshBtn.disabled = true;
+  refreshBtn.textContent = "Analyzing…";
 
   await chrome.scripting.executeScript({
     target: { tabId: tab.id },
@@ -87,12 +95,17 @@ document.getElementById("refresh").addEventListener("click", async () => {
   setTimeout(loadMetrics, 400);
 });
 
+// ------------------ Live Analysis ------------------
+
+liveCheck.addEventListener("click", async () => {
+  await chrome.storage.local.set({ cogloadLiveOnScroll: liveCheck.checked });
+});
+
 // ------------------ On Popup Open ------------------
 
 (async () => {
   const tab = await getCurrentTab();
   const unsupportedBanner = document.getElementById("unsupported");
-  const refreshBtn = document.getElementById("refresh");
   const pageUrlEl = document.getElementById("page-url");
 
   // Always show the URL of the page being analyzed
@@ -155,4 +168,26 @@ document.getElementById("refresh").addEventListener("click", async () => {
   } else {
     loadMetrics();
   }
+
+  // Initialize live checkbox from storage (default false)
+  try {
+    const s = await chrome.storage.local.get("cogloadLiveOnScroll");
+    liveCheck.checked = !!s.cogloadLiveOnScroll;
+  } catch (e) {
+    liveCheck.checked = false;
+  }
+
+  // Listen for metric updates written by the content script (e.g., after scroll)
+  chrome.storage.onChanged.addListener((changes, area) => {
+    if (area !== "local") return;
+    if (changes.cogloadMetrics) {
+      const newMetrics = changes.cogloadMetrics.newValue;
+      // Update UI immediately when metrics change
+      updateMetricsUI(newMetrics);
+    }
+    if (changes.cogloadLiveOnScroll) {
+      // Keep the checkbox in sync if changed elsewhere
+      liveCheck.checked = !!changes.cogloadLiveOnScroll.newValue;
+    }
+  });
 })();
